@@ -1,9 +1,43 @@
 #define UNICODE
 #define _UNICODE
 
+#pragma execution_character_set("utf-8")
+
 #include <windows.h>
+#include <math.h>
 
 const wchar_t CLASS_NAME[] = L"MainWindowClass";
+
+double F(double x) {
+    return 0.01*pow(x, 2);
+}
+
+void drawPoint(HDC hdc, int centerX, int centerY, double x, double y, double scaleX, double scaleY) {
+    int screenX = centerX + (x * scaleX);
+    int screenY = centerY - (y * scaleY);
+
+    Ellipse(hdc, screenX - 2, screenY - 2, screenX + 2, screenY + 2);
+}
+
+void drawCords(HDC hdc, int centerX, int centerY) {
+    MoveToEx(hdc, 0, centerY, NULL);
+    LineTo(hdc, 800, centerY);
+
+    MoveToEx(hdc, centerX, 0, NULL);
+    LineTo(hdc, centerX, 600);
+}
+
+void drawGraphic(HDC hdc, int centerX, int centerY) {
+
+	double scaleX = 2;
+	double scaleY = 5;
+
+    drawCords(hdc, centerX, centerY);
+
+    for (double x = -200; x <= 200; x+=(1.0/scaleX)) {
+        drawPoint(hdc, centerX, centerY, x, F(x), scaleX, scaleY);
+    }
+}
 
 // Обработчик сообщений окна
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -13,17 +47,75 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
         PostQuitMessage(0);
         return 0;
-    }
+    case WM_PAINT:
+    {
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hwnd, &ps);
 
+        // Текст
+
+        HFONT hFont = CreateFontW(
+            36,
+            0,
+            0,
+            0,
+            FW_SEMIBOLD,
+            FALSE,
+            FALSE,
+            FALSE,
+            DEFAULT_CHARSET,
+            OUT_DEFAULT_PRECIS,
+            CLIP_DEFAULT_PRECIS,
+            DEFAULT_QUALITY,
+            DEFAULT_PITCH | FF_DONTCARE,
+            L"Segoe UI"
+        );
+
+        HFONT oldFont = (HFONT)SelectObject(hdc, hFont);
+
+		TextOutW(hdc, 50, 10, L"Графический калькулятор", 23);
+
+        SelectObject(hdc, oldFont);
+        DeleteObject(hFont);
+
+        //Рисование графика
+
+        HPEN hPen = CreatePen(PS_SOLID, 2, RGB(100, 0, 0));
+
+        HBRUSH hBrush = CreateSolidBrush(RGB(254, 0, 0));
+
+        HPEN oldPen = (HPEN)SelectObject(hdc, hPen);
+        HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, hBrush);
+
+        RECT rc;
+        GetClientRect(hwnd, &rc);
+
+        int width = rc.right;
+        int height = rc.bottom;
+
+        int centerX = width / 2;
+        int centerY = height / 2;
+        drawGraphic(hdc, centerX, centerY);
+
+        SelectObject(hdc, oldPen);
+        SelectObject(hdc, oldBrush);
+
+        DeleteObject(hPen);
+        DeleteObject(hBrush);
+
+
+        // Конец рисования
+
+        EndPaint(hwnd, &ps);
+        return 0;
+    }
+    }
     return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
 // Точка входа
-int WINAPI wWinMain(HINSTANCE hInstance,
-    HINSTANCE,
-    PWSTR,
-    int nCmdShow)
-{
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
+
     WNDCLASSW wc = {};
 
     wc.lpfnWndProc = WindowProc;

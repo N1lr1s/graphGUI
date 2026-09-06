@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="graphGUI/graphGUI.vcxproj" />
+  <Project Path="graphGUI/graphGUI.vcxproj" Id="d3e29566-7378-45a1-81de-4bc0ce9aa72d" />
 </Solution>
