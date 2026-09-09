@@ -3,6 +3,7 @@
 
 #include <windows.h>
 #include <math.h>
+#include "Renderer.h"
 
 const wchar_t CLASS_NAME[] = L"MainWindowClass";
 
@@ -52,59 +53,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hwnd, &ps);
 
-        // Текст
-
-        HFONT hFont = CreateFontW(
-            36,
-            0,
-            0,
-            0,
-            FW_SEMIBOLD,
-            FALSE,
-            FALSE,
-            FALSE,
-            DEFAULT_CHARSET,
-            OUT_DEFAULT_PRECIS,
-            CLIP_DEFAULT_PRECIS,
-            DEFAULT_QUALITY,
-            DEFAULT_PITCH | FF_DONTCARE,
-            L"Segoe UI"
-        );
-
-        HFONT oldFont = (HFONT)SelectObject(hdc, hFont);
-
-        TextOutW(hdc, 50, 10, L"Графический калькулятор", 23);
-
-        SelectObject(hdc, oldFont);
-        DeleteObject(hFont);
-
-        //Рисование графика
-
-        HPEN hPen = CreatePen(PS_SOLID, 2, RGB(100, 0, 0));
-
-        HBRUSH hBrush = CreateSolidBrush(RGB(254, 0, 0));
-
-        HPEN oldPen = (HPEN)SelectObject(hdc, hPen);
-        HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, hBrush);
-
-        RECT rc;
-        GetClientRect(hwnd, &rc);
-
-        int width = rc.right;
-        int height = rc.bottom;
-
-        int centerX = width / 2;
-        int centerY = height / 2;
-        drawGraphic(hdc, centerX, centerY);
-
-        SelectObject(hdc, oldPen);
-        SelectObject(hdc, oldBrush);
-
-        DeleteObject(hPen);
-        DeleteObject(hBrush);
-
-
-        // Конец рисования
+        Renderer renderer(hdc);
+        renderer.Draw(hwnd);
 
         EndPaint(hwnd, &ps);
         return 0;
