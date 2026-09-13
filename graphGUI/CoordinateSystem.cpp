@@ -15,6 +15,9 @@ void CoordinateSystem::SetViewportSize(int width, int height)
 {
     m_width = width;
     m_height = height;
+
+	m_originX = width / 2.0;
+	m_originY = height / 2.0;
 }
 
 POINT CoordinateSystem::WorldToScreen(double x, double y) const
