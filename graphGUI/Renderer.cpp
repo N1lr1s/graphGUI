@@ -75,5 +75,7 @@ void Renderer::DrawGrid(RECT)
 
 void Renderer::DrawGraph(RECT)
 {
+    for (int i = -10; i <= 10; i += 0.1) {
 
+    }
 }
