@@ -142,12 +142,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CoordinateSystem.cpp" />
+    <ClCompile Include="Function.cpp" />
+    <ClCompile Include="GoldenSection.cpp" />
+    <ClCompile Include="Graph.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CoordinateSystem.h" />
+    <ClInclude Include="Function.h" />
+    <ClInclude Include="GoldenSection.h" />
+    <ClInclude Include="Graph.h" />
+    <ClInclude Include="Iteration.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>

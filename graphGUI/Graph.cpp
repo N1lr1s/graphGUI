@@ -3,13 +3,15 @@
 
 void Graph::Draw(Renderer& renderer)
 {
-    bool isFirst = true;
-    for (int i = -10; i <= 10; i += 0.1) {
-        
+    for (double i = -10.0; i <= 10.0; i += 0.1) {
+        double y1 = F(i);
+		double y2 = F(i + 0.1);
+
+		renderer.DrawLine(i, y1, i + 0.1, y2);
     }
 }
 
 double Graph::F(double x) const
 {
-    return x * x;
+    return m_function.Parabola(x);
 }

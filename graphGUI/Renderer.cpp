@@ -15,7 +15,7 @@ void Renderer::Draw(HWND hwnd)
 
     DrawGrid(rc);
     DrawAxes(rc);
-    DrawGraph(rc);
+    m_graph.Draw(*this);
     DrawText();
 }
 
@@ -71,11 +71,4 @@ void Renderer::DrawLine(double x1, double y1, double x2, double y2) {
 
 void Renderer::DrawGrid(RECT)
 {
-}
-
-void Renderer::DrawGraph(RECT)
-{
-    for (int i = -10; i <= 10; i += 0.1) {
-
-    }
 }
