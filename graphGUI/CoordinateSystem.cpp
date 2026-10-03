@@ -4,11 +4,11 @@ CoordinateSystem::CoordinateSystem()
 {
     m_scale = 40;
 
-    m_width = 800;
-    m_height = 600;
+    m_width = 400;
+    m_height = 300;
 
-    m_originX = 400;
-    m_originY = 300;
+    m_originX = 200;
+    m_originY = 150;
 }
 
 void CoordinateSystem::SetViewportSize(int width, int height)
@@ -27,7 +27,7 @@ POINT CoordinateSystem::WorldToScreen(double x, double y) const
     p.x = static_cast<LONG>(m_originX + x * m_scale);
 
     p.y = static_cast<LONG>(m_originY - y * m_scale);
-
+/////////хуцй
     return p;
 }
 

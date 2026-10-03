@@ -2,5 +2,5 @@
 
 double Function::Parabola(double x) const
 {
-    return x * x + 1;
+    return x * x * x;
 }

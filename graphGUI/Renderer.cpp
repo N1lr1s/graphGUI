@@ -21,15 +21,15 @@ void Renderer::Draw(HWND hwnd)
 
 void Renderer::DrawAxes(RECT rc)
 {
-    POINT left = m_coord.WorldToScreen(-100, 0);
-    POINT right = m_coord.WorldToScreen(100, 0);
-    POINT top = m_coord.WorldToScreen(0, 100);
-    POINT bot = m_coord.WorldToScreen(0, -100);
+    POINT left = m_coord.WorldToScreen(-7, 0);
+    POINT right = m_coord.WorldToScreen(7, 0);
+    POINT top = m_coord.WorldToScreen(0, -7);
+    POINT bot = m_coord.WorldToScreen(0, 7);
 
     MoveToEx(m_hdc, left.x, left.y, nullptr);
     LineTo(m_hdc, right.x, right.y);
 
-	for (int i = -100; i <= 100; i += 1)
+	for (int i = -7; i <= 7; i += 1)
 	{
 		POINT p1 = m_coord.WorldToScreen(i, -0.1);
 		POINT p2 = m_coord.WorldToScreen(i, 0.1);
@@ -40,7 +40,7 @@ void Renderer::DrawAxes(RECT rc)
     MoveToEx(m_hdc, top.x, top.y, nullptr);
     LineTo(m_hdc, bot.x, bot.y);
 
-    for (int j = -100; j <= 100; j += 1)
+    for (int j = -7; j <= 7; j += 1)
     {
         POINT t1 = m_coord.WorldToScreen(-0.1, j);
         POINT t2 = m_coord.WorldToScreen(0.1, j);
