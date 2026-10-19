@@ -20,7 +20,7 @@ private:
     void DrawGrid(RECT rc);
     void DrawAxes(RECT rc);
     void DrawGraph(RECT rc);
-    void DrawText();
+    void DrawText(RECT rc);
 
     HDC m_hdc;
 };

@@ -19,28 +19,6 @@ void drawPoint(HDC hdc, int centerX, int centerY, double x, double y, double sca
     Ellipse(hdc, screenX - 2, screenY - 2, screenX + 2, screenY + 2);
 }
 
-void drawCords(HDC hdc, int centerX, int centerY) {
-    MoveToEx(hdc, 0, centerY, NULL);
-    LineTo(hdc, 800, centerY);
-
-    MoveToEx(hdc, centerX, 0, NULL);
-    LineTo(hdc, centerX, 600);
-}
-
-void drawGraphic(HDC hdc, int centerX, int centerY) {
-
-    double scaleX = 2;
-    double scaleY = 5;
-
-    drawCords(hdc, centerX, centerY);
-
-    for (double x = -200; x <= 200; x += (1.0 / scaleX)) {
-        drawPoint(hdc, centerX, centerY, x, F(x), scaleX, scaleY);
-    }
-}
-
-
-
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
@@ -87,7 +65,7 @@ int RunApplication(HINSTANCE hInstance, int nCmdShow){
         CW_USEDEFAULT,
         CW_USEDEFAULT,
         800,
-        600,
+        800,
         nullptr,
         nullptr,
         hInstance,

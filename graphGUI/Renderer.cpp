@@ -1,5 +1,7 @@
 #include "Renderer.h"
 #include <math.h>
+#include <iostream>
+#include <string>
 
 Renderer::Renderer(HDC hdc)
     : m_hdc(hdc)
@@ -10,13 +12,12 @@ void Renderer::Draw(HWND hwnd)
 {
     RECT rc;
     GetClientRect(hwnd, &rc);
-
+    
 	m_coord.SetViewportSize(rc.right - rc.left, rc.bottom - rc.top);
-
     DrawGrid(rc);
     DrawAxes(rc);
     m_graph.Draw(*this);
-    DrawText();
+    DrawText(rc);
 }
 
 void Renderer::DrawAxes(RECT rc)
@@ -49,13 +50,15 @@ void Renderer::DrawAxes(RECT rc)
     }
 }
 
-void Renderer::DrawText()
+void Renderer::DrawText(RECT rc)
 {
+    std::wstring wst = std::to_wstring(rc.bottom);
+    LPCWSTR lwst = wst.c_str();
     TextOutW(
         m_hdc,
         20,
         20,
-        L"GraphCalc",
+        lwst,
         9
     );
 }
