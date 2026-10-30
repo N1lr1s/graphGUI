@@ -2,7 +2,7 @@
 
 CoordinateSystem::CoordinateSystem()
 {
-    m_scale = 40;
+    m_scale = 80;
 
     m_width = 400;
     m_height = 300;

@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "Function.h"
 #include <math.h>
 #include <iostream>
 #include <string>
@@ -12,12 +13,36 @@ void Renderer::Draw(HWND hwnd)
 {
     RECT rc;
     GetClientRect(hwnd, &rc);
-    
+	Function function;
+	GoldenSection goldenSection;
+	std::vector<Iteration> hist = goldenSection.Run(function, 0.0, 3.0, 0.01);
 	m_coord.SetViewportSize(rc.right - rc.left, rc.bottom - rc.top);
     DrawGrid(rc);
     DrawAxes(rc);
     m_graph.Draw(*this);
     DrawText(rc);
+    DrawGoldenSection(hist);
+	ResetPen();
+}
+
+void Renderer::DrawGoldenSection(std::vector<Iteration>& hist) {
+	int Color = 100;
+	while (!hist.empty()) {
+		const Iteration& iter = hist.front();
+		hist.erase(hist.begin());
+		POINT p11 = m_coord.WorldToScreen(iter.a, -5);
+		POINT p21 = m_coord.WorldToScreen(iter.b, -5);
+        POINT p12 = m_coord.WorldToScreen(iter.a, 5);
+        POINT p22 = m_coord.WorldToScreen(iter.b, 5);
+        SetPen(RGB(Color, 0, 0), 2);
+		MoveToEx(m_hdc, p11.x, p11.y, nullptr);
+		LineTo(m_hdc, p12.x, p12.y);
+        SetPen(RGB(0, 0, Color), 2);
+        MoveToEx(m_hdc, p21.x, p21.y, nullptr);
+        LineTo(m_hdc, p22.x, p22.y);
+		Color += 20;
+		Sleep(1000);
+	}
 }
 
 void Renderer::DrawAxes(RECT rc)
@@ -86,4 +111,27 @@ void Renderer::DrawLine(double x1, double y1, double x2, double y2) {
 
 void Renderer::DrawGrid(RECT)
 {
+}
+
+void Renderer::SetPen(COLORREF color, int width)
+{
+    if (m_pen != nullptr)
+    {
+        SelectObject(m_hdc, m_oldPen);
+        DeleteObject(m_pen);
+    }
+
+    m_pen = CreatePen(PS_SOLID, width, color);
+    m_oldPen = (HPEN)SelectObject(m_hdc, m_pen);
+}
+
+void Renderer::ResetPen()
+{
+    if (m_pen != nullptr)
+    {
+        SelectObject(m_hdc, m_oldPen);
+        DeleteObject(m_pen);
+        m_pen = nullptr;
+        m_oldPen = nullptr;
+    }
 }

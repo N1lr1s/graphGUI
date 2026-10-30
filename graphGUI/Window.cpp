@@ -65,7 +65,7 @@ int RunApplication(HINSTANCE hInstance, int nCmdShow){
         CW_USEDEFAULT,
         CW_USEDEFAULT,
         600,
-        600,
+        620,
         nullptr,
         nullptr,
         hInstance,
