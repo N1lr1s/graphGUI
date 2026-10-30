@@ -7,7 +7,7 @@ void Graph::Draw(Renderer& renderer)
         double y1 = F(i);
 		double y2 = F(i + 0.1);
 
-		if(F(i) < 7.0 && F(i) > -7.0) renderer.DrawLine(i, y1, i + 0.1, y2);
+		if((F(i) < 7.0 && F(i) > -7.0) && (F(i + 0.1) < 7.0 && F(i + 0.1) > -7.0)) renderer.DrawLine(i, y1, i + 0.1, y2);
     }
 }
 

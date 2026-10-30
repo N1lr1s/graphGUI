@@ -7,8 +7,8 @@ CoordinateSystem::CoordinateSystem()
     m_width = 400;
     m_height = 300;
 
-    m_originX = 200;
-    m_originY = 150;
+    m_originX = 290;
+    m_originY = 290;
 }
 
 void CoordinateSystem::SetViewportSize(int width, int height)

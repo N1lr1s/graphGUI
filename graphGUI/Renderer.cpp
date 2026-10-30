@@ -27,6 +27,18 @@ void Renderer::DrawAxes(RECT rc)
     POINT top = m_coord.WorldToScreen(0, -7);
     POINT bot = m_coord.WorldToScreen(0, 7);
 
+    MoveToEx(m_hdc, left.x, 10, nullptr);
+    LineTo(m_hdc, left.x, 570);
+
+    MoveToEx(m_hdc, right.x, 10, nullptr);
+    LineTo(m_hdc, right.x, 570);
+
+    MoveToEx(m_hdc, 10, top.y, nullptr);
+    LineTo(m_hdc, 570, top.y);
+
+    MoveToEx(m_hdc, 10, bot.y, nullptr);
+    LineTo(m_hdc, 570, bot.y);
+
     MoveToEx(m_hdc, left.x, left.y, nullptr);
     LineTo(m_hdc, right.x, right.y);
 
