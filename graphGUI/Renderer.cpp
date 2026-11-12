@@ -1,8 +1,4 @@
 #include "Renderer.h"
-#include "Function.h"
-#include <math.h>
-#include <iostream>
-#include <string>
 
 Renderer::Renderer(HDC hdc)
     : m_hdc(hdc)
@@ -11,16 +7,25 @@ Renderer::Renderer(HDC hdc)
 
 void Renderer::Draw(HWND hwnd)
 {
+
+    m_layout.Update(hwnd);
     RECT rc;
     GetClientRect(hwnd, &rc);
-	Function function;
-	GoldenSection goldenSection;
-	std::vector<Iteration> hist = goldenSection.Run(function, 0.0, 3.0, 0.01);
-	m_coord.SetViewportSize(rc.right - rc.left, rc.bottom - rc.top);
-    DrawGrid(rc);
-    DrawAxes(rc);
-    m_graph.Draw(*this);
-    if (!isPainted) DrawGoldenSection(hist);
+
+	RECT plot = m_layout.GetGraphRect();
+
+    m_coord.SetViewport(plot);
+
+	std::vector<Iteration> hist = m_goldenSection.Run(m_graph.m_function, 0.0, 3.0, 0.01);
+
+    DrawInterface(rc);
+    DrawGrid(plot);
+    DrawAxes(rc, plot);
+
+    m_graph.Draw(*this, plot);
+
+//    if (!isPainted) DrawGoldenSection(hist);
+
     DrawText(rc);
 	ResetPen();
 }
@@ -43,18 +48,21 @@ void Renderer::DrawGoldenSection(std::vector<Iteration>& hist) {
         LineTo(m_hdc, p22.x, p22.y);
 		Color += 20;
         count++;
-		Sleep(1500);
 	}
     isPainted = true;
 }
 
-void Renderer::DrawAxes(RECT rc)
+void Renderer::DrawAxes(RECT rc, RECT plot)
 {
-    POINT left = m_coord.WorldToScreen(-10, 0);
-    POINT right = m_coord.WorldToScreen(10, 0);
-    POINT top = m_coord.WorldToScreen(0, -10);
-    POINT bot = m_coord.WorldToScreen(0, 10);
+	SetPen(RGB(0, 0, 0), 2);
+    POINT left = m_coord.WorldToScreen(-100, 0);
+    POINT right = m_coord.WorldToScreen(100, 0);
+    POINT top = m_coord.WorldToScreen(0, -100);
+    POINT bot = m_coord.WorldToScreen(0, 100);
 
+	BeginClip(plot);
+
+/*
     MoveToEx(m_hdc, left.x, 10, nullptr);
     LineTo(m_hdc, left.x, 570);
 
@@ -66,10 +74,13 @@ void Renderer::DrawAxes(RECT rc)
 
     MoveToEx(m_hdc, 10, bot.y, nullptr);
     LineTo(m_hdc, 570, bot.y);
-
+    */
     MoveToEx(m_hdc, left.x, left.y, nullptr);
     LineTo(m_hdc, right.x, right.y);
-
+    
+    MoveToEx(m_hdc, top.x, top.y, nullptr);
+    LineTo(m_hdc, bot.x, bot.y);
+    /*
 	for (int i = -10; i <= 10; i += 1)
 	{
 		POINT p1 = m_coord.WorldToScreen(i, -0.1);
@@ -78,9 +89,6 @@ void Renderer::DrawAxes(RECT rc)
 		LineTo(m_hdc, p2.x, p2.y);
 	}
 
-    MoveToEx(m_hdc, top.x, top.y, nullptr);
-    LineTo(m_hdc, bot.x, bot.y);
-
     for (int j = -10; j <= 10.0; j += 1)
     {
         POINT t1 = m_coord.WorldToScreen(-0.1, j);
@@ -88,6 +96,9 @@ void Renderer::DrawAxes(RECT rc)
         MoveToEx(m_hdc, t1.x, t1.y, nullptr);
         LineTo(m_hdc, t2.x, t2.y);
     }
+    */
+    SetPen(RGB(0, 0, 0), 1);
+	EndClip();
 }
 
 void Renderer::DrawText(RECT rc)
@@ -117,9 +128,51 @@ void Renderer::DrawLine(double x1, double y1, double x2, double y2) {
 	LineTo(m_hdc, p2.x, p2.y);
 }
 
-void Renderer::DrawGrid(RECT)
+void Renderer::DrawGrid(RECT plot)
 {
+    BeginClip(plot);
+
+    SetPen(RGB(200, 200, 200), 1);
+
+
+    for (double x = -20; x <= 20; x += 1)
+    {
+        POINT p1 = m_coord.WorldToScreen(x, -20);
+        POINT p2 = m_coord.WorldToScreen(x, 20);
+
+        MoveToEx(m_hdc, p1.x, p1.y, nullptr);
+        LineTo(m_hdc, p2.x, p2.y);
+    }
+
+    for (double y = -20; y <= 20; y += 1)
+    {
+        POINT p1 = m_coord.WorldToScreen(-20, y);
+        POINT p2 = m_coord.WorldToScreen(20, y);
+
+        MoveToEx(m_hdc, p1.x, p1.y, nullptr);
+        LineTo(m_hdc, p2.x, p2.y);
+    }
+    SetPen(RGB(0, 0, 0), 1);
+    EndClip();
 }
+
+void Renderer::DrawInterface(RECT rc) {
+
+    DrawFrame(m_layout.GetGraphRect());
+	SetBrush(RGB(130, 130, 130));
+    DrawFrame(m_layout.GetControlRect());
+
+    DrawFrame(m_layout.GetStatusRect());
+    SetBrush(RGB(255, 255, 255));
+}
+
+void Renderer::DrawFrame(const RECT& rect) {
+	Rectangle(m_hdc, rect.left, rect.top, rect.right, rect.bottom);
+}
+
+
+// Перо и кисть для рисования
+
 
 void Renderer::SetPen(COLORREF color, int width)
 {
@@ -133,6 +186,7 @@ void Renderer::SetPen(COLORREF color, int width)
     m_oldPen = (HPEN)SelectObject(m_hdc, m_pen);
 }
 
+
 void Renderer::ResetPen()
 {
     if (m_pen != nullptr)
@@ -142,4 +196,46 @@ void Renderer::ResetPen()
         m_pen = nullptr;
         m_oldPen = nullptr;
     }
+}
+
+void Renderer::SetBrush(COLORREF color)
+{
+    if (m_brush != nullptr)
+    {
+        SelectObject(m_hdc, m_oldBrush);
+        DeleteObject(m_brush);
+    }
+    m_brush = CreateSolidBrush(color);
+    SelectObject(m_hdc, m_brush);
+}
+
+void Renderer::ResetBrush()
+{
+	if (m_brush != nullptr)
+	{
+		SelectObject(m_hdc, m_oldBrush);
+		DeleteObject(m_brush);
+		m_brush = nullptr;
+		m_oldBrush = nullptr;
+	}
+}
+
+
+//Обрезка области вывода графика
+
+void Renderer::BeginClip(const RECT& plot)
+{
+	SaveDC(m_hdc);
+
+	IntersectClipRect(
+		m_hdc,
+		plot.left,
+		plot.top,
+		plot.right,
+		plot.bottom);
+}
+
+void Renderer::EndClip()
+{
+	RestoreDC(m_hdc, -1);
 }

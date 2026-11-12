@@ -13,7 +13,7 @@ public:
 
     CoordinateSystem();
 
-    void SetViewportSize(int width, int height);
+    void SetViewport(const RECT& rect);
 
     POINT WorldToScreen(double x, double y) const;
 

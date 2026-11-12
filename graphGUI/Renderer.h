@@ -1,35 +1,52 @@
 #pragma once
+#include <windows.h>
+
 #include "CoordinateSystem.h"
 #include "Graph.h"
 #include "GoldenSection.h"
+#include "Layout.h"
 
-#include <Windows.h>
+#include <math.h>
+#include <iostream>
+#include <string>
 
 class Renderer
 {
 public:
 
+    Layout m_layout;
     Graph m_graph;
+    GoldenSection m_goldenSection;
     explicit Renderer(HDC hdc);
 
     void Draw(HWND hwnd);
     void DrawLine(double x1, double y1, double x2, double y2);
+    void BeginClip(const RECT& plot);
+    void EndClip();
+    void SetPen(COLORREF color, int width = 1);
+    void ResetPen();
+
+    void SetBrush(COLORREF color);
+	void ResetBrush();
 
 private:
 
     bool isPainted = false;
-	void SetPen(COLORREF color, int width = 1);
-	void ResetPen();
 
 	HPEN m_pen = nullptr;
 	HPEN m_oldPen = nullptr;
+	HBRUSH m_brush = nullptr;
+	HBRUSH m_oldBrush = nullptr;
 
     CoordinateSystem m_coord;
     void DrawGrid(RECT rc);
-    void DrawAxes(RECT rc);
+    void DrawAxes(RECT rc, RECT plot);
     void DrawGraph(RECT rc);
     void DrawGoldenSection(std::vector<Iteration>& hist);
+	void DrawInterface(RECT rc);
+    void DrawFrame(const RECT& rect);
     void DrawText(RECT rc);
 
     HDC m_hdc;
+
 };

@@ -1,7 +1,10 @@
 #pragma once
-#include <vector>
+
 #include "Function.h"
 #include "Iteration.h"
+
+#include <vector>
+#include <cmath>
 
 class GoldenSection
 {

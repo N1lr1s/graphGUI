@@ -11,13 +11,13 @@ CoordinateSystem::CoordinateSystem()
     m_originY = 290;
 }
 
-void CoordinateSystem::SetViewportSize(int width, int height)
+void CoordinateSystem::SetViewport(const RECT& rect)
 {
-    /*m_width = width;
-    m_height = height;
+    m_width = rect.right - rect.left;
+    m_height = rect.bottom - rect.top;
 
-	m_originX = width / 2.0;
-	m_originY = height / 2.0;*/
+	m_originX = rect.left + m_width / 2.0;
+	m_originY = rect.top + m_height / 2.0;
 }
 
 POINT CoordinateSystem::WorldToScreen(double x, double y) const

@@ -1,23 +1,8 @@
 #define UNICODE
-#define _UNICODE
 
-#include <windows.h>
-#include <math.h>
-#include "Renderer.h"
+#include "Window.h"
 
 const wchar_t CLASS_NAME[] = L"MainWindowClass";
-
-
-double F(double x) {
-    return 0.01 * pow(x, 2);
-}
-
-void drawPoint(HDC hdc, int centerX, int centerY, double x, double y, double scaleX, double scaleY) {
-    int screenX = centerX + (x * scaleX);
-    int screenY = centerY - (y * scaleY);
-
-    Ellipse(hdc, screenX - 2, screenY - 2, screenX + 2, screenY + 2);
-}
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -37,11 +22,15 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         EndPaint(hwnd, &ps);
         return 0;
     }
+	break;
+	case WM_SIZE:
+    {
+		InvalidateRect(hwnd, nullptr, TRUE);
+		return 0;
+    }
     }
     return DefWindowProc(hwnd, msg, wParam, lParam);
 }
-
-
 
 int RunApplication(HINSTANCE hInstance, int nCmdShow){
 
@@ -52,7 +41,7 @@ int RunApplication(HINSTANCE hInstance, int nCmdShow){
     wc.lpszClassName = CLASS_NAME;
     wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
     wc.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
-    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    wc.hbrBackground = (HBRUSH)(COLOR_SCROLLBAR + 1);
 
     if (!RegisterClassW(&wc))
         return -1;
@@ -65,7 +54,7 @@ int RunApplication(HINSTANCE hInstance, int nCmdShow){
         CW_USEDEFAULT,
         CW_USEDEFAULT,
         1020,
-        820,
+        920,
         nullptr,
         nullptr,
         hInstance,

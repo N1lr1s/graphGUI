@@ -1,7 +1,5 @@
 #include "GoldenSection.h"
 
-#include <cmath>
-
 std::vector<Iteration> GoldenSection::Run(
     const Function& function,
     double a,

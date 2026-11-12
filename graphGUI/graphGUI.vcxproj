@@ -145,6 +145,7 @@
     <ClCompile Include="Function.cpp" />
     <ClCompile Include="GoldenSection.cpp" />
     <ClCompile Include="Graph.cpp" />
+    <ClCompile Include="Layout.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="GoldenSection.h" />
     <ClInclude Include="Graph.h" />
     <ClInclude Include="Iteration.h" />
+    <ClInclude Include="Layout.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
