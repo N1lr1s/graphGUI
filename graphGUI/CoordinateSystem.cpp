@@ -2,9 +2,9 @@
 
 CoordinateSystem::CoordinateSystem()
 {
-    m_scale = 80;
+    m_scale = 40;
 
-    m_width = 400;
+    m_width = 800;
     m_height = 300;
 
     m_originX = 290;

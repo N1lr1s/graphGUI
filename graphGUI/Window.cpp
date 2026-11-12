@@ -64,8 +64,8 @@ int RunApplication(HINSTANCE hInstance, int nCmdShow){
         WS_OVERLAPPEDWINDOW,    // стиль окна
         CW_USEDEFAULT,
         CW_USEDEFAULT,
-        600,
-        620,
+        1020,
+        820,
         nullptr,
         nullptr,
         hInstance,

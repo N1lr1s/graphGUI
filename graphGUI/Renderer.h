@@ -17,6 +17,7 @@ public:
 
 private:
 
+    bool isPainted = false;
 	void SetPen(COLORREF color, int width = 1);
 	void ResetPen();
 
