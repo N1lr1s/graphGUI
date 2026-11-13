@@ -1,13 +1,23 @@
+
 #define UNICODE
 
 #include "Window.h"
 
 const wchar_t CLASS_NAME[] = L"MainWindowClass";
 
+namespace 
+{
+    Layout layout;
+    Controls controls;
+}
+
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
+	case WM_CREATE:
+		controls.Create(hwnd);
+		return 0;
     case WM_DESTROY:
         PostQuitMessage(0);
         return 0;
@@ -16,8 +26,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hwnd, &ps);
 
+		layout.Update(hwnd);
+
         Renderer renderer(hdc);
-        renderer.Draw(hwnd);
+        renderer.Draw(hwnd, layout);
 
         EndPaint(hwnd, &ps);
         return 0;
@@ -25,6 +37,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	break;
 	case WM_SIZE:
     {
+        layout.Update(hwnd);
+		controls.Resize(layout.GetControlRect());
 		InvalidateRect(hwnd, nullptr, TRUE);
 		return 0;
     }
@@ -47,10 +61,10 @@ int RunApplication(HINSTANCE hInstance, int nCmdShow){
         return -1;
 
     HWND hwnd = CreateWindowExW(
-        0,                      // расширенный стиль
-        CLASS_NAME,             // имя класса
-        L"GraphCalc",           // заголовок
-        WS_OVERLAPPEDWINDOW,    // стиль окна
+        0,
+        CLASS_NAME,
+        L"GraphCalc",
+        WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
         1020,

@@ -5,6 +5,7 @@
 #include "Graph.h"
 #include "GoldenSection.h"
 #include "Layout.h"
+#include "Controls.h"
 
 #include <math.h>
 #include <iostream>
@@ -19,7 +20,7 @@ public:
     GoldenSection m_goldenSection;
     explicit Renderer(HDC hdc);
 
-    void Draw(HWND hwnd);
+    void Draw(HWND hwnd, const Layout& m_layout);
     void DrawLine(double x1, double y1, double x2, double y2);
     void BeginClip(const RECT& plot);
     void EndClip();
@@ -43,7 +44,7 @@ private:
     void DrawAxes(RECT rc, RECT plot);
     void DrawGraph(RECT rc);
     void DrawGoldenSection(std::vector<Iteration>& hist);
-	void DrawInterface(RECT rc);
+	void DrawInterface(RECT plot, RECT control, RECT status);
     void DrawFrame(const RECT& rect);
     void DrawText(RECT rc);
 

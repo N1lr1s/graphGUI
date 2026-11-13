@@ -141,6 +141,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Controls.cpp" />
     <ClCompile Include="CoordinateSystem.cpp" />
     <ClCompile Include="Function.cpp" />
     <ClCompile Include="GoldenSection.cpp" />
@@ -151,6 +152,8 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ControlIDs.h" />
+    <ClInclude Include="Controls.h" />
     <ClInclude Include="CoordinateSystem.h" />
     <ClInclude Include="Function.h" />
     <ClInclude Include="GoldenSection.h" />

@@ -1,3 +1,4 @@
+
 #include "Renderer.h"
 
 Renderer::Renderer(HDC hdc)
@@ -5,25 +6,24 @@ Renderer::Renderer(HDC hdc)
 {
 }
 
-void Renderer::Draw(HWND hwnd)
+void Renderer::Draw(HWND hwnd, const Layout& m_layout)
 {
-
-    m_layout.Update(hwnd);
     RECT rc;
     GetClientRect(hwnd, &rc);
-
-	RECT plot = m_layout.GetGraphRect();
+	RECT plot = m_layout.GetPlotRect();
+	RECT control = m_layout.GetControlRect();
+	RECT status = m_layout.GetStatusRect();
+	RECT graph = m_layout.GetGraphRect();
 
     m_coord.SetViewport(plot);
 
-	std::vector<Iteration> hist = m_goldenSection.Run(m_graph.m_function, 0.0, 3.0, 0.01);
+    DrawInterface(graph, control, status);
 
-    DrawInterface(rc);
     DrawGrid(plot);
     DrawAxes(rc, plot);
-
     m_graph.Draw(*this, plot);
 
+    std::vector<Iteration> hist = m_goldenSection.Run(m_graph.m_function, 0.0, 3.0, 0.01);
 //    if (!isPainted) DrawGoldenSection(hist);
 
     DrawText(rc);
@@ -103,20 +103,7 @@ void Renderer::DrawAxes(RECT rc, RECT plot)
 
 void Renderer::DrawText(RECT rc)
 {
-    TextOutW(
-        m_hdc,
-        700,
-        20,
-        L"Количество корней: ",
-        20
-    );
-    TextOutW(
-        m_hdc,
-        700,
-        50,
-        L"Корень: ",
-        9
-    );
+
 }
 
 void Renderer::DrawLine(double x1, double y1, double x2, double y2) {
@@ -156,13 +143,13 @@ void Renderer::DrawGrid(RECT plot)
     EndClip();
 }
 
-void Renderer::DrawInterface(RECT rc) {
+void Renderer::DrawInterface(RECT plot, RECT control, RECT status) {
 
-    DrawFrame(m_layout.GetGraphRect());
-	SetBrush(RGB(130, 130, 130));
-    DrawFrame(m_layout.GetControlRect());
+    DrawFrame(plot);
+	SetBrush(RGB(190, 190, 190));
+    DrawFrame(control);
 
-    DrawFrame(m_layout.GetStatusRect());
+    DrawFrame(status);
     SetBrush(RGB(255, 255, 255));
 }
 

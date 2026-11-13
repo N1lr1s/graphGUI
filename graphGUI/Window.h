@@ -1,6 +1,8 @@
+
 #pragma once
 
 #include "Renderer.h"
+#include "Controls.h"
 
 #include <windows.h>
 #include <math.h>
