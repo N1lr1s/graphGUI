@@ -15,9 +15,12 @@ void CoordinateSystem::SetViewport(const RECT& rect)
 {
     m_width = rect.right - rect.left;
     m_height = rect.bottom - rect.top;
+}
 
-	m_originX = rect.left + m_width / 2.0;
-	m_originY = rect.top + m_height / 2.0;
+void CoordinateSystem::SetOrigins(const RECT& rect)
+{
+    m_originX = rect.left + m_width / 2.0;
+    m_originY = rect.top + m_height / 2.0;
 }
 
 void CoordinateSystem::Zoom(double factor)
@@ -29,6 +32,12 @@ void CoordinateSystem::Zoom(double factor)
 
     if (m_scale > 500)
         m_scale = 500;
+}
+
+void CoordinateSystem::Move(int dxPixels, int dyPixels)
+{
+    m_originX += dxPixels;
+    m_originY += dyPixels;
 }
 
 POINT CoordinateSystem::WorldToScreen(double x, double y) const

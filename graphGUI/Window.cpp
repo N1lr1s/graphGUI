@@ -95,6 +95,9 @@ LRESULT Window::HandleMessage(UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:
 
 		m_controls.Create(m_hwnd);
+		m_layout.Update(m_hwnd);
+		m_coord.SetViewport(m_layout.GetGraphRect());
+		m_coord.SetOrigins(m_layout.GetGraphRect());
 		return 0;
 
 	case WM_DESTROY:
@@ -118,6 +121,9 @@ LRESULT Window::HandleMessage(UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_SIZE:
 	{
 		m_layout.Update(m_hwnd);
+
+		m_coord.SetViewport(m_layout.GetGraphRect());
+		m_coord.SetOrigins(m_layout.GetGraphRect());
 
 		m_controls.Resize(m_layout.GetControlRect());
 		InvalidateRect(m_hwnd, nullptr, TRUE);
@@ -148,6 +154,38 @@ LRESULT Window::HandleMessage(UINT msg, WPARAM wParam, LPARAM lParam)
 			m_coord.Zoom(0.9);
 
 		InvalidateRect(m_hwnd, nullptr, TRUE);
+		return 0;
+	}
+	case WM_LBUTTONDOWN:
+	{
+		m_drag = true;
+
+		m_lastMousePos.x = GET_X_LPARAM(lParam);
+		m_lastMousePos.y = GET_Y_LPARAM(lParam);
+
+		SetCapture(m_hwnd);
+
+		return 0;
+	}
+	case WM_LBUTTONUP:
+	{
+		m_drag = false;
+		ReleaseCapture();
+
+		return 0;
+	}
+	case WM_MOUSEMOVE: {
+		if (m_drag)
+		{
+			POINT currentMousePos;
+			currentMousePos.x = GET_X_LPARAM(lParam);
+			currentMousePos.y = GET_Y_LPARAM(lParam);
+			int dx = currentMousePos.x - m_lastMousePos.x;
+			int dy = currentMousePos.y - m_lastMousePos.y;
+			m_coord.Move(dx, dy);
+			m_lastMousePos = currentMousePos;
+			InvalidateRect(m_hwnd, nullptr, TRUE);
+		}
 		return 0;
 	}
 	}

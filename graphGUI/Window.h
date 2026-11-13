@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Windows.h>
+#include <windowsx.h>
 
 #include "Layout.h"
 #include "Controls.h"
@@ -20,6 +21,10 @@ public:
     int MessageLoop();
 
 private:
+
+	bool m_drag = false;
+	POINT m_lastMousePos;
+
 
     HWND m_hwnd{};
 
