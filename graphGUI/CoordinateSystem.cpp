@@ -20,6 +20,17 @@ void CoordinateSystem::SetViewport(const RECT& rect)
 	m_originY = rect.top + m_height / 2.0;
 }
 
+void CoordinateSystem::Zoom(double factor)
+{
+	m_scale *= factor;
+
+    if (m_scale < 5)
+        m_scale = 5;
+
+    if (m_scale > 500)
+        m_scale = 500;
+}
+
 POINT CoordinateSystem::WorldToScreen(double x, double y) const
 {
     POINT p;

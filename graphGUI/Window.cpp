@@ -1,53 +1,16 @@
-
 #define UNICODE
 
 #include "Window.h"
 
 const wchar_t CLASS_NAME[] = L"MainWindowClass";
 
-namespace 
+
+Window::Window()
 {
-    Layout layout;
-    Controls controls;
 }
 
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+bool Window::Create(HINSTANCE hInstance, int nCmdShow)
 {
-    switch (msg)
-    {
-	case WM_CREATE:
-		controls.Create(hwnd);
-		return 0;
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        return 0;
-    case WM_PAINT:
-    {
-        PAINTSTRUCT ps;
-        HDC hdc = BeginPaint(hwnd, &ps);
-
-		layout.Update(hwnd);
-
-        Renderer renderer(hdc);
-        renderer.Draw(hwnd, layout);
-
-        EndPaint(hwnd, &ps);
-        return 0;
-    }
-	break;
-	case WM_SIZE:
-    {
-        layout.Update(hwnd);
-		controls.Resize(layout.GetControlRect());
-		InvalidateRect(hwnd, nullptr, TRUE);
-		return 0;
-    }
-    }
-    return DefWindowProc(hwnd, msg, wParam, lParam);
-}
-
-int RunApplication(HINSTANCE hInstance, int nCmdShow){
-
     WNDCLASSW wc = {};
 
     wc.lpfnWndProc = WindowProc;
@@ -72,7 +35,7 @@ int RunApplication(HINSTANCE hInstance, int nCmdShow){
         nullptr,
         nullptr,
         hInstance,
-        nullptr);
+        this);
 
     if (hwnd == nullptr)
         return -1;
@@ -80,13 +43,113 @@ int RunApplication(HINSTANCE hInstance, int nCmdShow){
     ShowWindow(hwnd, nCmdShow);
     UpdateWindow(hwnd);
 
-    MSG msg = {};
+    return true;
+}
 
-    while (GetMessageW(&msg, nullptr, 0, 0))
-    {
-        TranslateMessage(&msg);
-        DispatchMessageW(&msg);
-    }
+int Window::MessageLoop()
+{
+	MSG msg = {};
+	while (GetMessageW(&msg, nullptr, 0, 0))
+	{
+		TranslateMessage(&msg);
+		DispatchMessageW(&msg);
+	}
+	return (int)msg.wParam;
+}
 
-    return (int)msg.wParam;
+LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	Window* window = nullptr;
+	if (msg == WM_NCCREATE) {
+		CREATESTRUCT* cs = reinterpret_cast<CREATESTRUCT*>(lParam);
+
+		window = static_cast<Window*>(cs->lpCreateParams);
+
+		SetWindowLongPtrW(
+			hwnd,
+			GWLP_USERDATA,
+			reinterpret_cast<LONG_PTR>(window));
+
+		window->m_hwnd = hwnd;
+	}
+	else {
+		window = reinterpret_cast<Window*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));
+	}
+
+	if (window) {
+		return window->HandleMessage(msg, wParam, lParam);
+	}
+}
+
+
+LRESULT Window::HandleMessage(UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	switch (msg)
+	{
+	case WM_GETMINMAXINFO: {
+		LPMINMAXINFO lpMMI = (LPMINMAXINFO)lParam;
+		lpMMI->ptMinTrackSize.x = 400;
+		lpMMI->ptMinTrackSize.y = 310;
+		break;
+	}
+	case WM_CREATE:
+
+		m_controls.Create(m_hwnd);
+		return 0;
+
+	case WM_DESTROY:
+
+		PostQuitMessage(0);
+		return 0;
+
+	case WM_PAINT:
+	{
+		PAINTSTRUCT ps;
+
+		HDC hdc = BeginPaint(m_hwnd, &ps);
+
+		Renderer renderer(hdc, m_coord);
+		renderer.Draw(m_hwnd, m_layout, m_coord);
+
+		EndPaint(m_hwnd, &ps);
+
+		return 0;
+	}
+	case WM_SIZE:
+	{
+		m_layout.Update(m_hwnd);
+
+		m_controls.Resize(m_layout.GetControlRect());
+		InvalidateRect(m_hwnd, nullptr, TRUE);
+
+		return 0;
+	}
+	case WM_COMMAND:
+	{
+		switch (LOWORD(wParam))
+		{
+		case ID_BUTTON_RUN:
+		{
+			double a = m_controls.GetA();
+			double b = m_controls.GetB();
+			return 0;
+		}
+		}
+		break;
+	}
+	case WM_MOUSEWHEEL:
+	{
+		int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+
+		if (delta > 0)
+			m_coord.Zoom(1.1);
+
+		else
+			m_coord.Zoom(0.9);
+
+		InvalidateRect(m_hwnd, nullptr, TRUE);
+		return 0;
+	}
+	}
+	return DefWindowProc(m_hwnd, msg, wParam, lParam);
 }

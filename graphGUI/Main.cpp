@@ -1,9 +1,12 @@
 #include <windows.h>
 #include "Window.h"
 
-// Точка входа
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
+{
+    Window window;
 
-	return RunApplication(hInstance, nCmdShow);
+    if (!window.Create(hInstance, nCmdShow))
+        return -1;
 
+    return window.MessageLoop();
 }

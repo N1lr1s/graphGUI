@@ -15,6 +15,8 @@ public:
 
     void SetViewport(const RECT& rect);
 
+    void Zoom(double factor);
+
     POINT WorldToScreen(double x, double y) const;
 
     PointD ScreenToWorld(int x, int y) const;

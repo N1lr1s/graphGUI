@@ -1,12 +1,13 @@
 
 #include "Renderer.h"
 
-Renderer::Renderer(HDC hdc)
-    : m_hdc(hdc)
+Renderer::Renderer(HDC hdc, CoordinateSystem& coord)
+	: m_hdc(hdc),
+	m_coord(coord)
 {
 }
 
-void Renderer::Draw(HWND hwnd, const Layout& m_layout)
+void Renderer::Draw(HWND hwnd, const Layout& m_layout, CoordinateSystem& m_coord)
 {
     RECT rc;
     GetClientRect(hwnd, &rc);
@@ -146,7 +147,7 @@ void Renderer::DrawGrid(RECT plot)
 void Renderer::DrawInterface(RECT plot, RECT control, RECT status) {
 
     DrawFrame(plot);
-	SetBrush(RGB(190, 190, 190));
+	SetBrush(RGB(240, 240, 240));
     DrawFrame(control);
 
     DrawFrame(status);
